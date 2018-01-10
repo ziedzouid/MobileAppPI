@@ -23,7 +23,6 @@
 package com.codename1.demos.kitchen;
 
 import com.codename1.capture.Capture;
-import com.codename1.components.ImageViewer;
 import com.codename1.components.InfiniteProgress;
 import com.codename1.components.MediaPlayer;
 import com.codename1.components.MultiButton;
@@ -38,9 +37,11 @@ import com.codename1.io.Log;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.io.Util;
+import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.media.Media;
 import com.codename1.media.MediaManager;
 import com.codename1.ui.Button;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.Component;
 import com.codename1.ui.ComponentGroup;
 import com.codename1.ui.Container;
@@ -58,8 +59,10 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.table.TableLayout;
-import com.codename1.ui.util.Resources;
+import com.twilio.Twilio;
+import com.twilio.type.PhoneNumber;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,22 +70,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * You can play videos either from remote or local sources very easily in
- * Codename One, here we also show the ability to record a video that we can
- * playback later.
+ * You can play videos either from remote or local sources very easily in Codename One, here we also
+ * show the ability to record a video that we can playback later.
  *
  * @author Shai Almog
  */
-public class Video extends Demo {
-
-    static TextField emaillog, passwordlog;
+public class AddPost  extends Demo {
     //static Label contenu,arrive,depart,date;
     //Container comps;
     int temp;
-    Resources theme;
+   
+    public static final String ACCOUNT_SID = "AC6452be109fb5ab987f6a54860a684364";
+         public static final String AUTH_TOKEN = "b280c0c061cbd6e1c37944024cdfd658";
 
     public String getDisplayName() {
-        return "Posts";
+        return "addPost";
     }
 
     public Image getDemoIcon() {
@@ -135,54 +137,110 @@ public class Video extends Demo {
 
     @Override
     public Container createDemo(Form parent) {
-        Container comps = new Container();
-      
-        ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/TestMobile/web/app_dev.php/showPoste");
+                   Container comps = new Container(BoxLayout.y());
+        //Button delete = new Button("Delete");
+        //Button Edit = new Button("Edit");
+        Button Add=new Button("Add");
+         ConnectionRequest con = new ConnectionRequest();
+      //  con.setUrl("http://localhost/TestMobile/web/app_dev.php/9613628/showPosteUser");
+    
+        
+          //  con.addResponseListener(new ActionListener<NetworkEvent>()
+              // comps.add(new Label());
+              
+          Label depart=new Label("Departure");
+        ComboBox dep = new ComboBox();
+              dep.addItem("Ariena");
+              dep.addItem("Tunis");
+              dep.addItem("Beja");
+              dep.addItem("tatouine");
+             
 
-        //emaillog = new TextField("", "E-mail", 20, TextField.EMAILADDR);
-//        FontImage.setMaterialIcon(emaillog.getHintLabel(), FontImage.MATERIAL_EMAIL);
-        //passwordlog = new TextField("", "Password", 20, TextField.PASSWORD);
-        //      FontImage.setMaterialIcon(passwordlog.getHintLabel(), FontImage.MATERIAL_LOCK);
-        con.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                for (Poste t : getListEtudiant(new String(con.getResponseData()))) {
-                    /* addComps(parent, comps, new Label(UserDAO.user.nom, "InputContainerLabel"),
-                            new Label("Date of going" + t.getDatePost(), "InputContainerLabel"),
-                            new Label("Hello I would like to go from" + t.getDepart() + "To" + t.getArrive(), "InputContainerLabel"),
-                            new Label("Ps" + t.getContenu(), "InputContainerLabel")
-                            
-                    );*/
-                  //ImageViewer imge=new  ImageViewer(theme.getImage("no_image_user.png"));
-                  // comps.add(imge);
-             Image circleImage = getResources().getImage("post.png").scaled(100,100);
-             comps.add(circleImage);
+ Label arrive=new Label("Destination");
+        ComboBox arr = new ComboBox();
+        arr.addItem("Ariena");
+        arr.addItem("Tunis");
+        arr.addItem("Beja");
+        arr.addItem("tatouine");
+           Label db=new Label("Date ");
+    Picker datePoste = new Picker();
+   datePoste.setType(Display.PICKER_TYPE_DATE);
 
-                    comps.add(new Label(UserDAO.user.nom, "InputContainerLabel"));
-                    comps.add(new Label("Date of going" + t.getDatePost(), "InputContainerLabel"));
-                    comps.add(new Label("Hello I would like to go from" + t.getDepart() + "To" + t.getArrive(), "InputContainerLabel"));
-                    comps.add(   new Label("Ps:"+"" + t.getContenu(), "InputContainerLabel"));
-        Button delete = new Button("Delete");
-        Button Edit = new Button("Edit");
-                  //  System.out.println(t.getUser_id());
-       if(UserDAO.user.id==t.getUser_id())
-       { comps.add(delete);
-                    comps.add(Edit);}
-        delete.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                       Dialog k = new Dialog();
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+              
+            datePoste.setFormatter(format);
+          Label contenu=new Label("Content ");
+          TextField t=new TextField();
+         comps.add(depart);
+         comps.add(dep);
+         comps.add(arrive);
+         comps.add(arr);
+        // comps.add(db);
+         //comps.add(datePoste);
+         comps.add(contenu);
+         comps.add(t);
+     
+
+          comps.setScrollableY(true);
+        comps.setUIID("PaddedContainer");
+
+Container content = BorderLayout.center(comps);
+        
+        
+        Container ctnbt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+     //ctnbt.add(delete);
+       //ctnbt.add(Edit);
+       ctnbt.add(Add);
+
+        content.add(BorderLayout.SOUTH, ctnbt);
+
+        UserDAO userDAO = new UserDAO();
+        System.out.println(userDAO.user.id);
+        Add.addActionListener(new ActionListener() {
+           
+                                  
+
+                       @Override
+                       public void actionPerformed(ActionEvent evt) {
+                     ConnectionRequest req = new ConnectionRequest();
+                    // int foo = ;
+
+                     
+                req.setUrl("http://localhost/TestMobile/web/app_dev.php/newPoste?&id="+userDAO.user.id+"&jour"+datePoste.getDate()+ "&contenu="+ t.getText() + "&depart=" + dep.getSelectedItem() + "&arrive="+arr.getSelectedItem() + "");
+                            System.out.println(t.getText());
                             
-                            if (Dialog.show("Confirmation", "Poste successfuly deleted", "Ok", null)) {
-                                ConnectionRequest req = new ConnectionRequest();
-                                
-                                req.setUrl("http://localhost/TestMobile/web/app_dev.php/" + t.getId()+ "/Delete" + "");
-                                //System.out.println(t.getIdChambre());
-                                NetworkManager.getInstance().addToQueue(req);
-                                  Demo d = new Video();
-                                    d.init(res);
-                                       Form f = new Form("Posts", new BorderLayout());
+                       System.out.println(datePoste.getDate());
+
+                          System.out.println(dep.getSelectedItem() );
+                           System.out.println(arr.getSelectedItem()); 
+
+                Demo d = new Video();
+            d.init(res);
+            Form f = new Form("Posts", new BorderLayout());
+            f.add(BorderLayout.CENTER, d.createDemo(f));
+            Form previous = Display.getInstance().getCurrent();
+            f.getToolbar().setBackCommand(" ", ee -> {
+                if (d.onBack()) {
+                    previous.showBack();
+                }
+            });
+            f.show();   NetworkManager.getInstance().addToQueue(req); 
+                       
+                Twilio.init("AC6452be109fb5ab987f6a54860a684364", "b280c0c061cbd6e1c37944024cdfd658");
+ com.twilio.rest.api.v2010.account.Message message = com.twilio.rest.api.v2010.account.Message.creator(new PhoneNumber("+21692714774"),
+       new PhoneNumber("+18452456432"),"your Post was added").create();}               
+
+                   });
+        /*delete.addActionListener(e -> {
+            ToastBar.showMessage("Connecting...", FontImage.MATERIAL_ACCOUNT_BALANCE_WALLET);
+            //userDAO.RegisterUser();
+            userDAO.loginUser();
+        });
+
+        Edit.addActionListener(e -> {
+            Demo d = new Video();
+            d.init(res);
+            Form f = new Form("REGISTER", new BorderLayout());
             f.add(BorderLayout.CENTER, d.createDemo(f));
             Form previous = Display.getInstance().getCurrent();
             f.getToolbar().setBackCommand(" ", ee -> {
@@ -191,38 +249,8 @@ public class Video extends Demo {
                 }
             });
             f.show();
-                            }   }
-                    });
-            Edit.addActionListener(e -> {
-              EditPost u=new EditPost(t);
-               u.getF().show();
         });
-
-                }
-
-            }
-        });
-        NetworkManager.getInstance().addToQueue(con);
-
-        comps.setScrollableY(true);
-        comps.setUIID("PaddedContainer");
-
-        Container content = BorderLayout.center(comps);
-
-        // delete.setUIID("InputAvatarImage");
-        // Container ctnbt = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        //ctnbt.add(delete);
-        //ctnbt.add(Edit);
-        // content.add(BorderLayout.SOUTH, ctnbt);
-        UserDAO userDAO = new UserDAO();
-        /* delete.addActionListener(e -> {
-            ToastBar.showMessage("Connecting...", FontImage.MATERIAL_ACCOUNT_BALANCE_WALLET);
-            //userDAO.RegisterUser();
-            userDAO.loginUser();
-        });*/
-
-    
-
+*/
         content.setUIID("InputContainerForeground");
 
         Button avatar = new Button("");
@@ -264,70 +292,33 @@ public class Video extends Demo {
             }
         });
 
-       /* Container actualContent = LayeredLayout.encloseIn(content,
-                FlowLayout.encloseCenter(avatar));*/
+        Container actualContent = LayeredLayout.encloseIn(content,
+                FlowLayout.encloseCenter(avatar));
 
-        Container Video;
+        Container  Video;
         if (!Display.getInstance().isTablet()) {
             Label placeholder = new Label(" ");
 
-            Component.setSameHeight(content, placeholder);
-            Component.setSameWidth(content, placeholder);
+            Component.setSameHeight(actualContent, placeholder);
+            Component.setSameWidth(actualContent, placeholder);
 
-            Video = BorderLayout.center(placeholder);
+             Video = BorderLayout.center(placeholder);
 
             parent.addShowListener(e -> {
                 if (placeholder.getParent() != null) {
-                    Video.replace(placeholder, content, CommonTransitions.createFade(1500));
+                     Video.replace(placeholder, actualContent, CommonTransitions.createFade(1500));
                 }
             });
         } else {
-            Video = BorderLayout.center(content);
+          Video = BorderLayout.center(actualContent);
         }
-        Video.setUIID("InputContainerBackground");
+         Video.setUIID("InputContainerBackground");
 
-        return Video;
-    }
-
-    public ArrayList<Poste> getListEtudiant(String json) {
-        ArrayList<Poste> listePostes = new ArrayList<>();
-        System.out.println("JSON*************\n" + json);
-        try {
-
-            JSONParser j = new JSONParser();
-
-            Map<String, Object> postes = j.parseJSON(new CharArrayReader(json.toCharArray()));
-
-            System.out.println();
-            List<Map<String, Object>> liste = (List<Map<String, Object>>) postes.get("root");
-
-            for (Map<String, Object> o : liste) {
-                Poste e = new Poste();
-                //id, json, status);
-                e.setId((int) Float.parseFloat(o.get("id").toString()));
-                Map<String, Object> data2 = (Map<String, Object>) (o.get("datePost"));
-                temp = (int) Float.parseFloat(data2.get("timestamp").toString());
-                Date myDate = new Date(temp * 1000L);
-                e.setDatePost(myDate);
-                //  e.setContenu(e.toString());
-                System.out.println(o.get("userId").toString());
-              e.setUser_id((int) Float.parseFloat(o.get("userId").toString()));
-                e.setContenu(o.get("contenu").toString());
-                e.setArrive(o.get("arrive").toString());
-                e.setDepart(o.get("depart").toString());
-                // System.out.println(o);
-
-                // System.out.println(e.toString());
-                //System.out.println(o);
-                listePostes.add(e);
-                //System.out.println(listePostes);
-            }
-
-        } catch (IOException ex) {
-        }
-        return listePostes;
-
+        return  Video;
     }
   
+    
+
+
 
 }

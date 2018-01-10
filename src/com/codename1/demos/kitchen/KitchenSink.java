@@ -242,6 +242,7 @@ public class KitchenSink {
         Demo[] demos = new Demo[]{
             new Contacts(),
             new Themes(),
+            new Video()
 };
 
         for (Demo d : demos) {
@@ -413,6 +414,18 @@ public class KitchenSink {
             Form flogin = new Form("LOGIN", new BorderLayout());
             flogin.add(BorderLayout.CENTER, d.createDemo(flogin));
             flogin.show();
+        });
+        
+                f.getToolbar().addMaterialCommandToSideMenu("AddPost", FontImage.MATERIAL_WEB, e -> {
+            AddPost d = new AddPost();
+            d.init(res);
+            Form post = new Form("AddPost", new BorderLayout());
+            post.add(BorderLayout.CENTER, d.createDemo(post));
+            post.show();
+        });
+          f.getToolbar().addMaterialCommandToSideMenu("Statistics", FontImage.MATERIAL_WEB, e -> {
+          MyApplication m=new MyApplication();
+    m.start();
         });
 
         /* f.getToolbar().addMaterialCommandToSideMenu("CodenameOne.com",
